@@ -96,7 +96,7 @@ namespace Student_Affairs.Controllers
         // POST: Subjects/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name")] Subject subject)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Subject subject)
         {
             if (id != subject.ID)
             {
@@ -121,7 +121,7 @@ namespace Student_Affairs.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = id });
             }
             return View(subject);
         }

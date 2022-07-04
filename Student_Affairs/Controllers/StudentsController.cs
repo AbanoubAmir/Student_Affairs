@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Student_Affairs.Data;
 using Student_Affairs.Models;
+using Student_Affairs.Models.Helpers;
 using Student_Affairs.Models.StudentAffairViewModels;
 
 namespace Student_Affairs.Controllers
@@ -21,10 +22,54 @@ namespace Student_Affairs.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder,string currentFilter,string searchString,int? pageNumber)
         {
-            var studentAffairsContext = _context.Students.Include(s => s.Class);
-            return View(await studentAffairsContext.ToListAsync());
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Name_desc" : "";
+            ViewData["DateOfBirthSortParm"] = sortOrder == "DateOfBirth" ? "DateOfBirth_desc" : "DateOfBirth";
+            ViewData["ClassSortParm"] = sortOrder == "ClassID" ? "ClassID_desc" : "ClassID";
+            ViewData["AddressSortParm"] = sortOrder == "Address" ? "Address_desc" : "Address";
+            ViewData["EmailSortParm"] = sortOrder == "Email" ? "Email_desc" : "Email";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var students = from s in _context.Students
+                           select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                students = students.Where(s => s.Name.Contains(searchString));
+            }
+            if (string.IsNullOrEmpty(sortOrder))
+            {
+                sortOrder = "Name";
+            }
+            bool descending = false;
+            if (sortOrder.EndsWith("_desc"))
+            {
+                sortOrder = sortOrder[..^5];
+                descending = true;
+            }
+
+            if (descending)
+            {
+                students = students.OrderByDescending(e => EF.Property<object>(e, sortOrder));
+            }
+            else
+            {
+                students = students.OrderBy(e => EF.Property<object>(e, sortOrder));
+            }
+            int pageSize = 10;
+            return View(await PaginatedList<Student>.CreateAsync(students.AsNoTracking().Include(s=>s.Class),
+                pageNumber ?? 1, pageSize));
         }
 
         // GET: Students/Details/5
@@ -140,7 +185,7 @@ namespace Student_Affairs.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Details), new { id = id });
                 }
                 catch (DbUpdateException ex)
                 {

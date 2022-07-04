@@ -121,7 +121,7 @@ namespace Student_Affairs.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Details), new { id = id });
             }
             return View(@class);
         }
