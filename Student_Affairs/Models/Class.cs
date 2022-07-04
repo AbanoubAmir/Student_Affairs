@@ -9,6 +9,7 @@ namespace Student_Affairs.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         [Required]
+        [Display(Name = "Name*")]
         public string Name { get; set; }
 
         public ICollection<Student> Students { get; set; }

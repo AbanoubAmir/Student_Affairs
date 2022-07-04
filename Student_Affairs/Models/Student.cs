@@ -11,17 +11,22 @@ namespace Student_Affairs.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
         [Required]
+        [Display(Name = "Name*")]
         public string Name { get; set; }
         [Required]
+        [Display(Name = "Address*")]
         [StringLength(80, MinimumLength = 3)]
         public string Address { get; set; }
         [Required]
         [BirthDateValidation]
+        [Display(Name = "DOB*")]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
         [Required]
         [EmailAddress]
+        [Display(Name = "Email*")]
         public string Email { get; set; }
+        [Display(Name = "Class Name*")]
         public int ClassID { get; set; }
 
         public Class Class { get; set; }

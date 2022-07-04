@@ -107,8 +107,6 @@ namespace Student_Affairs.Controllers
         }
 
         // POST: Students/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Address,DateOfBirth,Email,ClassID")] Student student, string[] selectedSubjects)
@@ -249,7 +247,7 @@ namespace Student_Affairs.Controllers
             }
             catch (DbUpdateException ex)
             {
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = ex.Message });
+                return RedirectToAction(nameof(Delete), new { id, saveChangesError = true, errorMessage = ex.Message });
             }
         }
 

@@ -95,8 +95,6 @@ namespace Student_Affairs.Controllers
         }
 
         // POST: Subjects/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name")] Subject subject)
@@ -163,7 +161,7 @@ namespace Student_Affairs.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Details), new { id = id });
+                return RedirectToAction(nameof(Details), new { id });
             }
             return View(subject);
         }
@@ -200,7 +198,7 @@ namespace Student_Affairs.Controllers
         {
             if (_context.StudentSubjects.Any(s => s.SubjectID == id))
             {
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = "Can not delete a subject that has students enrolled in it" });
+                return RedirectToAction(nameof(Delete), new { id, saveChangesError = true, errorMessage = "Can not delete a subject that has students enrolled in it" });
             }
             var subject = await _context.Subjects.Include(s => s.StudentSubjects).SingleAsync(s => s.ID == id);
             if (subject == null)
@@ -216,7 +214,7 @@ namespace Student_Affairs.Controllers
             }
             catch (DbUpdateException ex)
             {
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = ex.Message });
+                return RedirectToAction(nameof(Delete), new { id, saveChangesError = true, errorMessage = ex.Message });
             }
         }
 

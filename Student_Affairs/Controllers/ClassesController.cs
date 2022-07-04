@@ -62,6 +62,7 @@ namespace Student_Affairs.Controllers
             {
                 classes = classes.OrderBy(e => EF.Property<object>(e, sortOrder));
             }
+            //TODO: User selects pagesize
             int pageSize = 10;
             return View(await PaginatedList<Class>.CreateAsync(classes.AsNoTracking(),
                 pageNumber ?? 1, pageSize));
@@ -93,8 +94,6 @@ namespace Student_Affairs.Controllers
         }
 
         // POST: Classes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name")] Class @class)
@@ -134,8 +133,6 @@ namespace Student_Affairs.Controllers
         }
 
         // POST: Classes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name")] Class @class)
@@ -163,7 +160,7 @@ namespace Student_Affairs.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Details), new { id = id });
+                return RedirectToAction(nameof(Details), new { id });
             }
             return View(@class);
         }
@@ -199,7 +196,7 @@ namespace Student_Affairs.Controllers
         {
             if(_context.Students.Any(s => s.ClassID == id))
             {
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = "Can not delete a class that has students enrolled in it" });
+                return RedirectToAction(nameof(Delete), new { id, saveChangesError = true, errorMessage = "Can not delete a class that has students enrolled in it" });
             }
             var @class = await _context.Classes.FindAsync(id);
             if(@class == null)
@@ -214,7 +211,7 @@ namespace Student_Affairs.Controllers
             }
             catch (DbUpdateException ex)
             {
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = ex.Message });
+                return RedirectToAction(nameof(Delete), new { id, saveChangesError = true, errorMessage = ex.Message });
             }
 
         }
