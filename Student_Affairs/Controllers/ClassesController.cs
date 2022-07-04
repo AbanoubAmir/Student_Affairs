@@ -34,7 +34,8 @@ namespace Student_Affairs.Controllers
             }
 
             var @class = await _context.Classes
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .Include(c => c.Students)
+                .FirstOrDefaultAsync(c => c.ID == id);
             if (@class == null)
             {
                 return NotFound();
@@ -126,7 +127,7 @@ namespace Student_Affairs.Controllers
         }
 
         // GET: Classes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false, string errorMessage = "")
         {
             if (id == null)
             {
@@ -139,7 +140,13 @@ namespace Student_Affairs.Controllers
             {
                 return NotFound();
             }
-
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewData["ErrorMessage"] =
+                    "Delete failed. Try again, and if the problem persists " +
+                    "see your system administrator.\n" +
+                    errorMessage;
+            }
             return View(@class);
         }
 
@@ -148,10 +155,26 @@ namespace Student_Affairs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if(_context.Students.Any(s => s.ClassID == id))
+            {
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = "Can not delete a class that has students enrolled in it" });
+            }
             var @class = await _context.Classes.FindAsync(id);
-            _context.Classes.Remove(@class);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if(@class == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            try
+            {
+                _context.Classes.Remove(@class);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = ex.Message });
+            }
+
         }
 
         private bool ClassExists(int id)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Student_Affairs.Models.Helpers;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,9 +13,10 @@ namespace Student_Affairs.Models
         [Required]
         public string Name { get; set; }
         [Required]
-        [StringLength(80, MinimumLength = 5)]
+        [StringLength(80, MinimumLength = 3)]
         public string Address { get; set; }
         [Required]
+        [BirthDateValidation]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
         [Required]
