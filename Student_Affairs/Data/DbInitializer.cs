@@ -38,7 +38,10 @@ namespace Student_Affairs.Data
             new Student{Name="Paula",Address="PortSaid",DateOfBirth=DateTime.Parse("2002-09-01"), Email = "paula@gmail.com", ClassID = 3},
             new Student{Name="Carol",Address="Cairo",DateOfBirth=DateTime.Parse("2001-09-01"), Email = "carol@gmail.com", ClassID = 3},
             new Student{Name="Urlich",Address="USA",DateOfBirth=DateTime.Parse("2003-09-01"), Email = "urlich@gmail.com", ClassID = 4},
-            new Student{Name="Usef",Address="UK",DateOfBirth=DateTime.Parse("2005-09-01"), Email = "usef@gmail.com", ClassID = 4}
+            new Student{Name="Usef",Address="UK",DateOfBirth=DateTime.Parse("2005-09-01"), Email = "usef@gmail.com", ClassID = 4},
+            new Student{Name="Aba",Address="UK",DateOfBirth=DateTime.Parse("2005-09-01"), Email = "aba@gmail.com", ClassID = 4},
+            new Student{Name="Amr",Address="UK",DateOfBirth=DateTime.Parse("2005-09-01"), Email = "amr@gmail.com", ClassID = 4},
+            new Student{Name="Omar",Address="UK",DateOfBirth=DateTime.Parse("2005-09-01"), Email = "Omar@gmail.com", ClassID = 4}
             };
             foreach (Student s in students)
             {
@@ -54,7 +57,11 @@ namespace Student_Affairs.Data
             new Subject{Name="Calculus"},
             new Subject{Name="Trigonometry"},
             new Subject{Name="Composition"},
-            new Subject{Name="Literature"}
+            new Subject{Name="Literature"},
+            new Subject{Name="English"},
+            new Subject{Name="Arabic"},
+            new Subject{Name="Biology"},
+            new Subject{Name="Linear Algerba"},
             };
             foreach (Subject s in subjects)
             {
@@ -71,7 +78,10 @@ namespace Student_Affairs.Data
                 new StudentSubject{StudentID=5,SubjectID=5},
                 new StudentSubject{StudentID=6,SubjectID=6},
                 new StudentSubject{StudentID=7,SubjectID=7},
-                new StudentSubject{StudentID=8,SubjectID=1}
+                new StudentSubject{StudentID=8,SubjectID=8},
+                new StudentSubject{StudentID=9,SubjectID=9},
+                new StudentSubject{StudentID=10,SubjectID=10},
+                new StudentSubject{StudentID=11,SubjectID=11},
             };
             foreach(StudentSubject s in studentSubject)
             {

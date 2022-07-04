@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Student_Affairs.Data;
 using Student_Affairs.Models;
+using Student_Affairs.Models.Helpers;
 
 namespace Student_Affairs.Controllers
 {
@@ -20,9 +21,50 @@ namespace Student_Affairs.Controllers
         }
 
         // GET: Classes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder, string currentFilter, string searchString, int? pageNumber)
         {
-            return View(await _context.Classes.ToListAsync());
+            ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "Name_desc" : "";
+
+            if (searchString != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchString = currentFilter;
+            }
+
+            ViewData["CurrentFilter"] = searchString;
+
+            var classes = from s in _context.Classes
+                           select s;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                classes = classes.Where(s => s.Name.Contains(searchString));
+            }
+            if (string.IsNullOrEmpty(sortOrder))
+            {
+                sortOrder = "Name";
+            }
+            bool descending = false;
+            if (sortOrder.EndsWith("_desc"))
+            {
+                sortOrder = sortOrder[..^5];
+                descending = true;
+            }
+
+            if (descending)
+            {
+                classes = classes.OrderByDescending(e => EF.Property<object>(e, sortOrder));
+            }
+            else
+            {
+                classes = classes.OrderBy(e => EF.Property<object>(e, sortOrder));
+            }
+            int pageSize = 10;
+            return View(await PaginatedList<Class>.CreateAsync(classes.AsNoTracking(),
+                pageNumber ?? 1, pageSize));
         }
 
         // GET: Classes/Details/5
