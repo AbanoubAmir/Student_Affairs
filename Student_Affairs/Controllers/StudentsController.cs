@@ -156,7 +156,7 @@ namespace Student_Affairs.Controllers
         }
 
         // GET: Students/Delete/5
-        public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false)
+        public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false, string errorMessage = "")
         {
             if (id == null)
             {
@@ -178,7 +178,8 @@ namespace Student_Affairs.Controllers
             {
                 ViewData["ErrorMessage"] =
                     "Delete failed. Try again, and if the problem persists " +
-                    "see your system administrator.";
+                    "see your system administrator. \n"
+                    +errorMessage;
             }
 
             return View(student);
@@ -201,9 +202,9 @@ namespace Student_Affairs.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex)
             {
-                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true });
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = ex.Message });
             }
         }
 

@@ -127,7 +127,7 @@ namespace Student_Affairs.Controllers
         }
 
         // GET: Subjects/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, bool? saveChangesError = false, string errorMessage = "")
         {
             if (id == null)
             {
@@ -141,6 +141,13 @@ namespace Student_Affairs.Controllers
                 return NotFound();
             }
 
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewData["ErrorMessage"] =
+                    "Delete failed. Try again, and if the problem persists " +
+                    "see your system administrator.\n" +
+                    errorMessage;
+            }
             return View(subject);
         }
 
@@ -149,10 +156,26 @@ namespace Student_Affairs.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
-            _context.Subjects.Remove(subject);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (_context.StudentSubjects.Any(s => s.SubjectID == id))
+            {
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = "Can not delete a subject that has students enrolled in it" });
+            }
+            var subject = await _context.Subjects.Include(s => s.StudentSubjects).SingleAsync(s => s.ID == id);
+            if (subject == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            try
+            {
+                _context.Subjects.Remove(subject);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException ex)
+            {
+                return RedirectToAction(nameof(Delete), new { id = id, saveChangesError = true, errorMessage = ex.Message });
+            }
         }
 
         private bool SubjectExists(int id)
