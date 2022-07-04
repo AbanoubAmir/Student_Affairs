@@ -11,7 +11,10 @@ namespace Student_Affairs.Models
         public int ID { get; set; }
         [Required]
         public string Name { get; set; }
+        [Required]
+        [StringLength(80, MinimumLength = 5)]
         public string Address { get; set; }
+        [Required]
         [DataType(DataType.Date)]
         public DateTime DateOfBirth { get; set; }
         [Required]
