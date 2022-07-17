@@ -12,6 +12,7 @@ namespace Student_Affairs.Models
         [Display(Name = "Name*")]
         public string Name { get; set; }
 
+        public string Description { get; set; }
         public ICollection<Student> Students { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Student_Affairs.Data
     {
         public static void Initialize(StudentAffairsContext context)
         {
-            context.Database.EnsureCreated();
+            //context.Database.EnsureCreated();
 
             // Look for any students.
             if (context.Classes.Any())
